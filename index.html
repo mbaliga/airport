@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="d3.js"></script>
+<style> body{margin: 10px;}</style>
+
+<h1> Karan Darji </h1>
+<p> Basic select DOM element and bind data to it </p>
+<div id="description"></div>
+<div id="vis"></div>
+
+dataurl =
+  "https://gist.githubusercontent.com/amitkaps/1a6151703c3103429aeba5257a5db979/raw/92df18e983132642b54e76f4eac34c7741c083fd/airports.csv"
+
+  d3 = require("d3")
+
+  data = await d3.csv(dataurl, parse)
+
+  function parse (datum) {
+  return {
+    id: +datum["id"],
+    altitude: +datum["altitude"],
+    country: datum["country"],
+    city: datum["city"],
+    iata: datum["iata"]
+  }
+}
+
+indiaData = data.filter (filterFunction)
+                .sort (sortfunction)
+                .slice(0, 15)
+
+                function filterFunction (d) {
+  return d.country === "India"
+}
+
+function sortfunction (a, b) {
+  return b.altitude - a.altitude
+}
+
+indData = data.filter (d => d.country === "India")
+.sort( (a,b) => b.altitude - a.altitude)
+.slice(0, 15)
+
+margin = ({top: 20, right: 10, bottom: 20, left: 50})
+
+width = 800- margin.right - margin.left
+
+height = 600 - margin.top - margin.bottom
+
+y = d3.scaleLinear()
+.rangeRound ([height, 0])
+.domain([0, d3.max(indData, d=> d.altitude)])
+
+x = d3.scaleBand()
+.rangeRound ([0, width])
+.padding (0.1)
+.domain(indData.map ( d=> d.iata))
+
+chart = {
+  const svg = d3.select(DOM.svg(width, height));
+
+  const g = svg.append("g")
+
+  g.selectAll("rect")
+    .data(indData)
+  .enter()
+    .append("rect")
+    .attr("x", d => x(d.iata))
+    .attr("y", d => y(d.altitude))
+    .attr("width", x.bandwidth())
+    .attr("height", d => height - y(d.altitude))
+
+  return svg.node()
+}
